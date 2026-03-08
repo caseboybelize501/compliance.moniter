@@ -1,5 +1,7 @@
 # ACMP — Autonomous Compliance Monitoring Platform
 
+> **Open Source First** - All core dependencies are open source. Proprietary APIs (OpenAI, Okta, Slack) are optional and user-provided.
+
 Continuously monitors infra, code, and data flows against SOC2/HIPAA/GDPR/ISO27001,
 auto-collects evidence, flags violations, and generates audit-ready packages.
 
@@ -16,7 +18,7 @@ cp .env.example .env
 ### 2. Generate required secrets
 
 ```bash
-# Generate encryption key (32-byte Fernet key)
+# Generate encryption key
 python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 
 # Generate JWT secret
@@ -25,38 +27,59 @@ python -c "import secrets; print(secrets.token_urlsafe(32))"
 
 Add these to your `.env` file.
 
-### 3. Configure minimum sources
+### 3. Choose your stack
 
-At minimum, add one cloud provider to `.env`:
+**Basic (PostgreSQL + Minio + Redis):**
+```bash
+docker-compose up -d
+```
+
+**With Local LLM (vLLM - requires NVIDIA GPU):**
+```bash
+docker-compose --profile llm up -d
+```
+
+**With Keycloak Authentication:**
+```bash
+docker-compose --profile auth up -d
+```
+
+**CPU-Only LLM (Ollama instead of vLLM):**
+```bash
+docker-compose --profile ollama up -d
+```
+
+**Full Stack:**
+```bash
+docker-compose --profile llm --profile auth --profile monitoring up -d
+```
+
+### 4. Configure your sources
+
+Add at least one cloud provider to `.env`:
 
 ```bash
-# AWS (recommended)
+# AWS (read-only SecurityAudit policy)
 AWS_ACCESS_KEY_ID=AKIA...
 AWS_SECRET_ACCESS_KEY=...
 AWS_REGION=us-east-1
 ```
 
-### 4. Start all services
+### 5. Verify API
 
 ```bash
-docker-compose up -d
+curl http://localhost:8000/health
 ```
 
-### 5. Verify sources connected
-
-```bash
-curl http://localhost:8000/api/integrations
-```
-
-### 6. View first control matrix
+### 6. View control matrix
 
 ```bash
 curl http://localhost:8000/api/controls?framework=soc2
 ```
 
-Controls will populate in ~5 minutes after first evidence collection.
-
 ## Architecture
+
+### Core Stack (Open Source)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -65,8 +88,31 @@ Controls will populate in ~5 minutes after first evidence collection.
 │     ▼           ▼                                               │
 │  PostgreSQL   Minio (S3)                                        │
 │  (metadata)   (artifacts)                                       │
+│                                                                 │
+│  Redis (Celery)  vLLM/Ollama (LLM)  Keycloak (Auth)            │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+### Configuration Options
+
+| Component | Default | Alternatives |
+|-----------|---------|--------------|
+| **Database** | PostgreSQL | Supabase |
+| **LLM** | vLLM (self-hosted) | Ollama, OpenAI (user key) |
+| **Auth** | Keycloak | Direct JWT, Okta, Azure AD |
+| **Messaging** | WhatsApp (Twilio) | Slack, Teams |
+| **Storage** | Minio | AWS S3, GCP GCS |
+
+## Proprietary APIs (Optional, User-Provided)
+
+All proprietary services are **opt-in**. Users provide their own credentials:
+
+| Service | Purpose | Free Tier |
+|---------|---------|-----------|
+| **OpenAI** | LLM for remediation suggestions | $5 trial credits |
+| **Twilio** | WhatsApp/SMS alerts | Free trial available |
+| **Slack** | Slack alerts | Free tier |
+| **Okta** | Identity evidence (optional) | Free developer org |
 
 ## Minimum IAM Permissions (AWS)
 
@@ -108,32 +154,25 @@ Or use this custom policy:
 | `/api/frameworks` | POST | Add custom framework |
 | `/api/integrations` | GET | Source connection status |
 
-## Add a Framework
-
-SOC2, HIPAA, GDPR, and ISO27001 are seeded by default.
-
-Add custom frameworks:
-
-```bash
-curl -X POST http://localhost:8000/api/frameworks \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Custom Framework", "controls": [...]}'
-```
-
-## Generate Audit Package
-
-```bash
-curl -X POST http://localhost:8000/api/reports \
-  -H "Content-Type: application/json" \
-  -d '{
-    "framework_id": "soc2",
-    "period_start": "2024-01-01",
-    "period_end": "2024-03-31",
-    "format": "zip"
-  }'
-```
-
 ## Troubleshooting
+
+### vLLM not starting (GPU issues)
+
+If you don't have an NVIDIA GPU, use Ollama instead:
+
+```bash
+# Stop vLLM
+docker-compose --profile llm down
+
+# Start Ollama
+docker-compose --profile ollama up -d
+```
+
+Update `.env`:
+```bash
+LLM_PROVIDER=ollama
+LLM_API_BASE=http://localhost:11434/v1
+```
 
 ### Sources not connecting
 

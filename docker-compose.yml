@@ -1,21 +1,66 @@
 version: '3.8'
 
+# =============================================================================
+# ACMP Docker Compose - Open Source First
+# 
+# Profiles:
+#   - default: PostgreSQL + Minio + Redis (core services)
+#   - llm: vLLM for local LLM serving (recommended)
+#   - auth: Keycloak for identity management
+#   - supabase: Supabase backend (alternative to PostgreSQL)
+#   - monitoring: Flower + Prometheus for observability
+# =============================================================================
+
 services:
+  # ===========================================================================
+  # CORE SERVICES (Always enabled)
+  # ===========================================================================
+  
   api:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: acmp-api
     environment:
-      - DATABASE_URL=postgresql://acmp:acmp_secret@postgres:5432/acmp
+      # Database (PostgreSQL or Supabase)
+      - DATABASE_URL=${DATABASE_URL:-postgresql://acmp:acmp_secret@postgres:5432/acmp}
+      - SUPABASE_URL=${SUPABASE_URL:-}
+      - SUPABASE_KEY=${SUPABASE_KEY:-}
+      
+      # Redis
       - REDIS_URL=redis://redis:6379/0
+      
+      # Storage
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-acmp_admin}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-acmp_secret_key}
+      
+      # Security
       - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
       - JWT_SECRET=${JWT_SECRET:-}
-      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      
+      # LLM (vLLM, Ollama, or OpenAI)
+      - LLM_PROVIDER=${LLM_PROVIDER:-vllm}
+      - LLM_API_BASE=${LLM_API_BASE:-http://vllm:8000/v1}
+      - LLM_MODEL=${LLM_MODEL:-mistralai/Mistral-7B-Instruct-v0.2}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-sk-no-key-required}
+      
+      # Auth (Keycloak or direct)
+      - KEYCLOAK_URL=${KEYCLOAK_URL:-http://keycloak:8080}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-acmp}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-acmp-backend}
+      
+      # Messaging (WhatsApp/Slack/Teams)
+      - MESSAGING_PROVIDER=${MESSAGING_PROVIDER:-whatsapp}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID:-}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN:-}
+      - TWILIO_WHATSAPP_NUMBER=${TWILIO_WHATSAPP_NUMBER:-}
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN:-}
+      - TEAMS_WEBHOOK_URL=${TEAMS_WEBHOOK_URL:-}
+      
+      # Application
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
     ports:
       - "8000:8000"
     volumes:
@@ -25,8 +70,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-      minio:
-        condition: service_healthy
     restart: unless-stopped
     networks:
       - acmp-network
@@ -38,12 +81,15 @@ services:
     container_name: acmp-worker
     command: celery -A server.celery_app worker --loglevel=info --pool=gevent --concurrency=4
     environment:
-      - DATABASE_URL=postgresql://acmp:acmp_secret@postgres:5432/acmp
+      - DATABASE_URL=${DATABASE_URL:-postgresql://acmp:acmp_secret@postgres:5432/acmp}
       - REDIS_URL=redis://redis:6379/0
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-acmp_admin}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-acmp_secret_key}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
+      - LLM_PROVIDER=${LLM_PROVIDER:-vllm}
+      - LLM_API_BASE=${LLM_API_BASE:-http://vllm:8000/v1}
+      - LLM_MODEL=${LLM_MODEL:-mistralai/Mistral-7B-Instruct-v0.2}
     volumes:
       - ./logs:/app/logs
     depends_on:
@@ -59,7 +105,7 @@ services:
     container_name: acmp-celery-beat
     command: celery -A server.celery_app beat --loglevel=info
     environment:
-      - DATABASE_URL=postgresql://acmp:acmp_secret@postgres:5432/acmp
+      - DATABASE_URL=${DATABASE_URL:-postgresql://acmp:acmp_secret@postgres:5432/acmp}
       - REDIS_URL=redis://redis:6379/0
     depends_on:
       - api
@@ -85,6 +131,10 @@ services:
     restart: unless-stopped
     networks:
       - acmp-network
+    profiles:
+      - default
+      - llm
+      - auth
 
   minio:
     image: minio/minio:latest
@@ -106,6 +156,10 @@ services:
     restart: unless-stopped
     networks:
       - acmp-network
+    profiles:
+      - default
+      - llm
+      - auth
 
   redis:
     image: redis:7-alpine
@@ -117,6 +171,128 @@ services:
     networks:
       - acmp-network
 
+  # ===========================================================================
+  # LLM SERVICE - vLLM (Profile: llm)
+  # Recommended: Better performance than Ollama for production
+  # ===========================================================================
+  
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: acmp-vllm
+    command: >
+      --model ${LLM_MODEL:-mistralai/Mistral-7B-Instruct-v0.2}
+      --max-model-len 4096
+      --gpu-memory-utilization 0.9
+      --tensor-parallel-size 1
+    environment:
+      - HUGGINGFACE_HUB_TOKEN=${HUGGINGFACE_TOKEN:-}
+    volumes:
+      - vllm_cache:/root/.cache/huggingface
+    ports:
+      - "8001:8000"
+    restart: unless-stopped
+    networks:
+      - acmp-network
+    profiles:
+      - llm
+    # Note: Requires GPU. For CPU-only, use Ollama profile instead.
+
+  # ===========================================================================
+  # LLM SERVICE - Ollama (Profile: ollama)
+  # Alternative: Easier setup, CPU-friendly
+  # ===========================================================================
+  
+  ollama:
+    image: ollama/ollama:latest
+    container_name: acmp-ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+    networks:
+      - acmp-network
+    profiles:
+      - ollama
+
+  # ===========================================================================
+  # AUTH SERVICE - Keycloak (Profile: auth)
+  # Open Source Identity & Access Management
+  # ===========================================================================
+  
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: acmp-keycloak
+    command: start-dev
+    environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN:-admin}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres:5432/keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=keycloak_secret
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - acmp-network
+    profiles:
+      - auth
+
+  # ===========================================================================
+  # SUPERBASE STACK (Profile: supabase)
+  # Alternative backend to standalone PostgreSQL
+  # ===========================================================================
+  
+  supabase-kong:
+    image: kong:2.8.1
+    container_name: supabase-kong
+    environment:
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/var/lib/kong/kong.yml
+      - KONG_DNS_ORDER=LAST,A,CNAME
+      - KONG_PLUGINS=request-transformer,cors,key-auth,acl
+    networks:
+      - acmp-network
+    profiles:
+      - supabase
+
+  supabase-postgrest:
+    image: postgrest/postgrest:v11.2.0
+    environment:
+      - PGRST_DB_URI=postgresql://postgres:postgres@postgres:5432/postgres
+      - PGRST_DB_SCHEMAS=public
+      - PGRST_DB_ANON_ROLE=anon
+    networks:
+      - acmp-network
+    profiles:
+      - supabase
+
+  # ===========================================================================
+  # MONITORING (Profile: monitoring)
+  # ===========================================================================
+  
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acmp-flower
+    command: celery -A server.celery_app flower --port=5555
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - acmp-network
+    profiles:
+      - monitoring
+
 networks:
   acmp-network:
     driver: bridge
@@ -125,3 +301,5 @@ volumes:
   postgres_data:
   minio_data:
   redis_data:
+  vllm_cache:
+  ollama_data:
