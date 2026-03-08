@@ -215,8 +215,9 @@
 | Tests | 5 | 0 | 5 | 0 | 20% |
 | Infrastructure | 5 | 5 | 0 | 0 | 100% |
 | **Storage (Minio)** | **8** | **6** | **0** | **2** | **75%** |
+| **Authentication** | **8** | **6** | **0** | **2** | **75%** |
 
-**Overall Project Completion: ~88%** (was 85%)
+**Overall Project Completion: ~90%** (was 88%)
 
 ---
 
