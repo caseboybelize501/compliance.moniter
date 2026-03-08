@@ -1,0 +1,241 @@
+{
+  "id": "hipaa",
+  "name": "HIPAA",
+  "version": "1.0.0",
+  "description": "Health Insurance Portability and Accountability Act - Privacy and Security Rules",
+  "metadata": {
+    "organization": "HHS",
+    "url": "https://www.hhs.gov/hipaa/index.html",
+    "total_controls": 54,
+    "safeguard_categories": [
+      "Administrative Safeguards",
+      "Physical Safeguards",
+      "Technical Safeguards",
+      "Organizational Requirements",
+      "Policies and Procedures"
+    ],
+    "phi_scope": true
+  },
+  "controls": [
+    {
+      "id": "HIPAA.164.308.a.1",
+      "name": "Security Management Process",
+      "description": "Implement policies and procedures to prevent, detect, contain, and correct security violations.",
+      "category": "Administrative Safeguards",
+      "evidence_types": ["risk_assessment", "risk_management_plan", "sanction_policy"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["risk_assessment", "risk_management_plan"]},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.308.a.4",
+      "name": "Information System Activity Review",
+      "description": "Implement procedures to regularly review records of information system activity.",
+      "category": "Administrative Safeguards",
+      "evidence_types": ["audit_logs", "log_review_procedure"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["log_review"]},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.308.a.5",
+      "name": "Security Awareness and Training",
+      "description": "Implement a security awareness and training program for all members of its workforce.",
+      "category": "Administrative Safeguards",
+      "evidence_types": ["training_records", "security Awareness_program"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["training_program", "training_records"]},
+      "severity": "HIGH",
+      "phi_scope": false
+    },
+    {
+      "id": "HIPAA.164.308.a.6",
+      "name": "Security Incident Procedures",
+      "description": "Implement policies and procedures to address security incidents.",
+      "category": "Administrative Safeguards",
+      "evidence_types": ["incident_response_plan", "incident_log"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["incident_response_policy"]},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.308.a.7",
+      "name": "Contingency Plan",
+      "description": "Establish policies and procedures for responding to an emergency or other occurrence.",
+      "category": "Administrative Safeguards",
+      "evidence_types": ["disaster_recovery_plan", "backup_procedure", "emergency_mode_plan"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["contingency_plan", "backup_policy"]},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.308.a.8",
+      "name": "Evaluation",
+      "description": "Perform a periodic technical and nontechnical evaluation.",
+      "category": "Administrative Safeguards",
+      "evidence_types": ["security_evaluation", "compliance_audit"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["annual_evaluation"]},
+      "severity": "MEDIUM",
+      "phi_scope": false
+    },
+    {
+      "id": "HIPAA.164.310.a.1",
+      "name": "Facility Access Controls",
+      "description": "Implement policies and procedures to limit physical access to electronic information systems.",
+      "category": "Physical Safeguards",
+      "evidence_types": ["facility_access_policy", "visitor_logs"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["facility_access_policy"]},
+      "severity": "MEDIUM",
+      "phi_scope": false
+    },
+    {
+      "id": "HIPAA.164.310.a.2",
+      "name": "Workstation Use",
+      "description": "Implement policies and procedures that specify the proper functions to be performed.",
+      "category": "Physical Safeguards",
+      "evidence_types": ["workstation_policy", "workstation_inventory"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["workstation_use_policy"]},
+      "severity": "MEDIUM",
+      "phi_scope": false
+    },
+    {
+      "id": "HIPAA.164.310.a.3",
+      "name": "Workstation Security",
+      "description": "Implement physical safeguards for all workstations that may access electronic protected health information.",
+      "category": "Physical Safeguards",
+      "evidence_types": ["workstation_security_config", "auto_lock_config"],
+      "rule_type": "existence",
+      "rule_config": {"required_controls": ["auto_lock", "privacy_screens"]},
+      "severity": "MEDIUM",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.310.b",
+      "name": "Device and Media Controls",
+      "description": "Implement policies and procedures that govern the receipt and removal of hardware and electronic media.",
+      "category": "Physical Safeguards",
+      "evidence_types": ["device_policy", "media_disposal_records"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["device_media_policy"]},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.312.a.1",
+      "name": "Access Control",
+      "description": "Implement technical policies and procedures for electronic information systems that allow only authorized persons to access electronic protected health information.",
+      "category": "Technical Safeguards",
+      "evidence_types": ["access_control_config", "unique_user_ids"],
+      "rule_type": "percentage",
+      "rule_config": {"threshold": 100, "metric": "users_with_unique_ids"},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.312.a.2",
+      "name": "Audit Controls",
+      "description": "Implement hardware, software, and/or procedural mechanisms that record and examine activity in information systems.",
+      "category": "Technical Safeguards",
+      "evidence_types": ["audit_log_config", "log_retention_policy"],
+      "rule_type": "existence",
+      "rule_config": {"required_controls": ["audit_logging", "log_retention"]},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.312.b",
+      "name": "Integrity Controls",
+      "description": "Implement policies and procedures to protect electronic protected health information from improper alteration or destruction.",
+      "category": "Technical Safeguards",
+      "evidence_types": ["integrity_controls", "checksum_config"],
+      "rule_type": "existence",
+      "rule_config": {"required_controls": ["data_integrity"]},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.312.c.1",
+      "name": "Authentication",
+      "description": "Implement procedures to verify that a person or entity seeking access to electronic protected health information is the one claimed.",
+      "category": "Technical Safeguards",
+      "evidence_types": ["authentication_config", "mfa_status"],
+      "rule_type": "percentage",
+      "rule_config": {"threshold": 100, "metric": "users_with_mfa"},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.312.e.1",
+      "name": "Transmission Security",
+      "description": "Implement technical security measures to guard against unauthorized access to electronic protected health information that is being transmitted over an electronic communications network.",
+      "category": "Technical Safeguards",
+      "evidence_types": ["tls_config", "encryption_in_transit"],
+      "rule_type": "percentage",
+      "rule_config": {"threshold": 100, "metric": "encrypted_transmission"},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.312.e.2",
+      "name": "Encryption and Decryption",
+      "description": "Implement a mechanism to encrypt and decrypt electronic protected health information.",
+      "category": "Technical Safeguards",
+      "evidence_types": ["encryption_config", "key_management"],
+      "rule_type": "percentage",
+      "rule_config": {"threshold": 100, "metric": "encrypted_at_rest"},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.314.a.1",
+      "name": "Business Associate Agreements",
+      "description": "A covered entity may permit a business associate to create, receive, maintain, or transmit electronic protected health information on its behalf.",
+      "category": "Organizational Requirements",
+      "evidence_types": ["baa_agreements", "vendor_inventory"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["baa_template", "vendor_baa"]},
+      "severity": "HIGH",
+      "phi_scope": true
+    },
+    {
+      "id": "HIPAA.164.530.a.1",
+      "name": "Privacy Practices Notice",
+      "description": "A covered entity must provide a notice of its privacy practices.",
+      "category": "Policies and Procedures",
+      "evidence_types": ["privacy_notice", "notice_distribution"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["privacy_practices_notice"]},
+      "severity": "MEDIUM",
+      "phi_scope": false
+    },
+    {
+      "id": "HIPAA.164.530.b",
+      "name": "Privacy Officer",
+      "description": "A covered entity must designate a privacy official responsible for developing and implementing its privacy policies and procedures.",
+      "category": "Policies and Procedures",
+      "evidence_types": ["privacy_officer_designation"],
+      "rule_type": "existence",
+      "rule_config": {"required_roles": ["privacy_officer"]},
+      "severity": "MEDIUM",
+      "phi_scope": false
+    },
+    {
+      "id": "HIPAA.164.530.c",
+      "name": "Privacy Training",
+      "description": "A covered entity must train all members of its workforce on the policies and procedures with respect to protected health information.",
+      "category": "Policies and Procedures",
+      "evidence_types": ["privacy_training_records"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["privacy_training_program"]},
+      "severity": "MEDIUM",
+      "phi_scope": false
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "id": "soc2",
+  "name": "SOC 2 Type II",
+  "version": "1.0.0",
+  "description": "Service Organization Control 2 - Trust Services Criteria",
+  "metadata": {
+    "organization": "AICPA",
+    "url": "https://www.aicpa.org/interestareas/frc/assuranceadvisoryservices/aicpaserviceorganizationcontrolreportssoc.html",
+    "total_controls": 64,
+    "trust_services_categories": [
+      "CC1 - Control Environment",
+      "CC2 - Communication and Information",
+      "CC3 - Risk Assessment",
+      "CC4 - Monitoring Activities",
+      "CC5 - Control Activities",
+      "CC6 - Logical and Physical Access Controls",
+      "CC7 - System Operations",
+      "CC8 - Change Management",
+      "CC9 - Risk Mitigation"
+    ]
+  },
+  "controls": [
+    {
+      "id": "CC1.1",
+      "name": "Control Environment - Integrity and Ethics",
+      "description": "The entity demonstrates a commitment to integrity and ethical values.",
+      "category": "CC1",
+      "evidence_types": ["code_of_conduct", "ethics_training", "whistleblower_policy"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["code_of_conduct", "ethics_policy"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC1.2",
+      "name": "Control Environment - Board Oversight",
+      "description": "The board of directors exercises oversight responsibility.",
+      "category": "CC1",
+      "evidence_types": ["board_minutes", "governance_charter"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["governance_charter"]},
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "CC2.1",
+      "name": "Communication - Information Quality",
+      "description": "The entity obtains and uses quality information to support internal control.",
+      "category": "CC2",
+      "evidence_types": ["data_quality_policy", "information_management"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["data_quality_policy"]},
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "CC3.1",
+      "name": "Risk Assessment - Objective Setting",
+      "description": "The entity specifies objectives with sufficient clarity.",
+      "category": "CC3",
+      "evidence_types": ["strategic_plan", "objectives_documentation"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["strategic_plan"]},
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "CC4.1",
+      "name": "Monitoring - Control Evaluations",
+      "description": "The entity selects, develops, and performs ongoing evaluations.",
+      "category": "CC4",
+      "evidence_types": ["audit_reports", "control_self_assessment"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["audit_schedule"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC5.1",
+      "name": "Control Activities - Selection and Development",
+      "description": "The entity selects and develops control activities that mitigate risks.",
+      "category": "CC5",
+      "evidence_types": ["control_documentation", "risk_matrix"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["control_matrix"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC6.1",
+      "name": "Logical Access - Authentication",
+      "description": "The entity implements logical access security software, infrastructure, and architectures.",
+      "category": "CC6",
+      "evidence_types": ["mfa_status", "authentication_policy", "iam_config"],
+      "rule_type": "percentage",
+      "rule_config": {"threshold": 100, "metric": "users_with_mfa"},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC6.2",
+      "name": "Logical Access - Authorization",
+      "description": "Prior to issuing system credentials, the entity registers and authorizes internal and external users.",
+      "category": "CC6",
+      "evidence_types": ["user_provisioning", "access_requests"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["access_request_workflow"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC6.3",
+      "name": "Logical Access - Role-Based Access",
+      "description": "The entity implements role-based access controls.",
+      "category": "CC6",
+      "evidence_types": ["rbac_config", "role_definitions"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["rbac_matrix"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC6.4",
+      "name": "Logical Access - Access Removal",
+      "description": "The entity restricts access credentials to authorized users.",
+      "category": "CC6",
+      "evidence_types": ["access_reviews", "termination_checklist"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["access_review", "offboarding"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC6.5",
+      "name": "Logical Access - Encryption",
+      "description": "The entity encrypts data during transmission and storage.",
+      "category": "CC6",
+      "evidence_types": ["encryption_config", "tls_config", "disk_encryption"],
+      "rule_type": "percentage",
+      "rule_config": {"threshold": 95, "metric": "encrypted_resources"},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC6.6",
+      "name": "Logical Access - Network Security",
+      "description": "The entity implements network security controls.",
+      "category": "CC6",
+      "evidence_types": ["firewall_rules", "security_groups", "network_acl"],
+      "rule_type": "existence",
+      "rule_config": {"required_controls": ["firewall", "segmentation"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC6.7",
+      "name": "Logical Access - Transmission Integrity",
+      "description": "The entity restricts the transmission of data to authorized parties.",
+      "category": "CC6",
+      "evidence_types": ["tls_config", "certificate_management"],
+      "rule_type": "percentage",
+      "rule_config": {"threshold": 100, "metric": "tls_enabled"},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC7.1",
+      "name": "System Operations - Detection and Monitoring",
+      "description": "The entity detects and monitors unauthorized activities.",
+      "category": "CC7",
+      "evidence_types": ["siem_config", "alerting_rules", "log_aggregation"],
+      "rule_type": "existence",
+      "rule_config": {"required_tools": ["siem", "log_aggregation"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC7.2",
+      "name": "System Operations - Incident Response",
+      "description": "The entity responds to identified security incidents.",
+      "category": "CC7",
+      "evidence_types": ["incident_response_plan", "incident_tickets"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["incident_response_plan"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC7.3",
+      "name": "System Operations - Incident Recovery",
+      "description": "The entity recovers from identified security incidents.",
+      "category": "CC7",
+      "evidence_types": ["backup_config", "disaster_recovery_plan", "rpo_rto"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["disaster_recovery_plan", "backup_policy"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC8.1",
+      "name": "Change Management - Change Authorization",
+      "description": "The entity authorizes, designs, develops, implements, and tests changes.",
+      "category": "CC8",
+      "evidence_types": ["change_tickets", "change_approval_workflow"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["change_approval"]},
+      "severity": "HIGH"
+    },
+    {
+      "id": "CC8.2",
+      "name": "Change Management - System Testing",
+      "description": "The entity tests changes prior to implementation.",
+      "category": "CC8",
+      "evidence_types": ["test_results", "ci_cd_config"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["testing_workflow"]},
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "CC9.1",
+      "name": "Risk Mitigation - Risk Identification",
+      "description": "The entity identifies and assesses risks that may impact vendors and business partners.",
+      "category": "CC9",
+      "evidence_types": ["vendor_risk_assessment", "third_party_inventory"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["vendor_risk_policy"]},
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "CC9.2",
+      "name": "Risk Mitigation - Vendor Management",
+      "description": "The entity manages risks related to vendors and business partners.",
+      "category": "CC9",
+      "evidence_types": ["vendor_contracts", "sla_agreements"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["vendor_management_policy"]},
+      "severity": "MEDIUM"
+    }
+  ]
+}

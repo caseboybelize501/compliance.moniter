@@ -1,0 +1,127 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acmp-api
+    environment:
+      - DATABASE_URL=postgresql://acmp:acmp_secret@postgres:5432/acmp
+      - REDIS_URL=redis://redis:6379/0
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-acmp_admin}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-acmp_secret_key}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
+      - JWT_SECRET=${JWT_SECRET:-}
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - acmp-network
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acmp-worker
+    command: celery -A server.celery_app worker --loglevel=info --pool=gevent --concurrency=4
+    environment:
+      - DATABASE_URL=postgresql://acmp:acmp_secret@postgres:5432/acmp
+      - REDIS_URL=redis://redis:6379/0
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-acmp_admin}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-acmp_secret_key}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - api
+    restart: unless-stopped
+    networks:
+      - acmp-network
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acmp-celery-beat
+    command: celery -A server.celery_app beat --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://acmp:acmp_secret@postgres:5432/acmp
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - api
+    restart: unless-stopped
+    networks:
+      - acmp-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: acmp-postgres
+    environment:
+      - POSTGRES_USER=acmp
+      - POSTGRES_PASSWORD=acmp_secret
+      - POSTGRES_DB=acmp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U acmp"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - acmp-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: acmp-minio
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY:-acmp_admin}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY:-acmp_secret_key}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - acmp-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: acmp-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - acmp-network
+
+networks:
+  acmp-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:
+  redis_data:

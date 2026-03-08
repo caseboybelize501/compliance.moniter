@@ -1,0 +1,235 @@
+{
+  "id": "gdpr",
+  "name": "GDPR",
+  "version": "1.0.0",
+  "description": "General Data Protection Regulation - EU Data Protection Framework",
+  "metadata": {
+    "organization": "European Union",
+    "url": "https://gdpr.eu/",
+    "total_controls": 42,
+    "article_mapping": true,
+    "regions": ["EU", "EEA"]
+  },
+  "controls": [
+    {
+      "id": "GDPR.Art5.1a",
+      "name": "Lawfulness, Fairness, and Transparency",
+      "description": "Personal data shall be processed lawfully, fairly and in a transparent manner.",
+      "category": "Article 5 - Principles",
+      "evidence_types": ["privacy_policy", "consent_records", "processing_register"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["privacy_policy", "processing_register"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 5(1)(a)"
+    },
+    {
+      "id": "GDPR.Art5.1b",
+      "name": "Purpose Limitation",
+      "description": "Personal data must be collected for specified, explicit and legitimate purposes.",
+      "category": "Article 5 - Principles",
+      "evidence_types": ["purpose_documentation", "data_inventory"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["processing_purpose_register"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 5(1)(b)"
+    },
+    {
+      "id": "GDPR.Art5.1c",
+      "name": "Data Minimization",
+      "description": "Personal data shall be adequate, relevant and limited to what is necessary.",
+      "category": "Article 5 - Principles",
+      "evidence_types": ["data_minimization_policy", "data_inventory"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["data_minimization_policy"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 5(1)(c)"
+    },
+    {
+      "id": "GDPR.Art5.1d",
+      "name": "Accuracy",
+      "description": "Personal data shall be accurate and, where necessary, kept up to date.",
+      "category": "Article 5 - Principles",
+      "evidence_types": ["data_accuracy_procedure", "rectification_process"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["data_accuracy_review"]},
+      "severity": "MEDIUM",
+      "article_reference": "Art. 5(1)(d)"
+    },
+    {
+      "id": "GDPR.Art5.1e",
+      "name": "Storage Limitation",
+      "description": "Personal data must be kept in a form which permits identification of data subjects for no longer than is necessary.",
+      "category": "Article 5 - Principles",
+      "evidence_types": ["retention_policy", "deletion_records"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["retention_schedule"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 5(1)(e)"
+    },
+    {
+      "id": "GDPR.Art5.1f",
+      "name": "Integrity and Confidentiality",
+      "description": "Personal data shall be processed in a manner that ensures appropriate security.",
+      "category": "Article 5 - Principles",
+      "evidence_types": ["security_policy", "encryption_config", "access_controls"],
+      "rule_type": "existence",
+      "rule_config": {"required_controls": ["encryption", "access_control"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 5(1)(f)"
+    },
+    {
+      "id": "GDPR.Art6",
+      "name": "Lawful Basis for Processing",
+      "description": "Processing shall be lawful only if and to the extent that at least one of the lawful bases applies.",
+      "category": "Article 6 - Lawfulness",
+      "evidence_types": ["lawful_basis_register", "consent_records"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["lawful_basis_assessment"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 6"
+    },
+    {
+      "id": "GDPR.Art7",
+      "name": "Conditions for Consent",
+      "description": "Where processing is based on consent, the controller shall be able to demonstrate that consent was given.",
+      "category": "Article 7 - Consent",
+      "evidence_types": ["consent_records", "consent_withdrawal_process"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["consent_management_system"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 7"
+    },
+    {
+      "id": "GDPR.Art13",
+      "name": "Information to be Provided - Collection from Data Subject",
+      "description": "Where personal data are collected from the data subject, the controller shall provide specific information.",
+      "category": "Article 13 - Transparency",
+      "evidence_types": ["privacy_notice", "collection_forms"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["privacy_notice"]},
+      "severity": "MEDIUM",
+      "article_reference": "Art. 13"
+    },
+    {
+      "id": "GDPR.Art15",
+      "name": "Right of Access",
+      "description": "The data subject shall have the right to obtain confirmation as to whether personal data concerning him or her are being processed.",
+      "category": "Article 15 - Data Subject Rights",
+      "evidence_types": ["dsar_process", "access_request_log"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["dsar_workflow"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 15"
+    },
+    {
+      "id": "GDPR.Art16",
+      "name": "Right to Rectification",
+      "description": "The data subject shall have the right to obtain rectification of inaccurate personal data.",
+      "category": "Article 16 - Data Subject Rights",
+      "evidence_types": ["rectification_process", "correction_log"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["rectification_workflow"]},
+      "severity": "MEDIUM",
+      "article_reference": "Art. 16"
+    },
+    {
+      "id": "GDPR.Art17",
+      "name": "Right to Erasure (Right to be Forgotten)",
+      "description": "The data subject shall have the right to obtain erasure of personal data concerning him or her.",
+      "category": "Article 17 - Data Subject Rights",
+      "evidence_types": ["erasure_process", "deletion_log"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["erasure_workflow"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 17"
+    },
+    {
+      "id": "GDPR.Art18",
+      "name": "Right to Restriction of Processing",
+      "description": "The data subject shall have the right to obtain restriction of processing.",
+      "category": "Article 18 - Data Subject Rights",
+      "evidence_types": ["restriction_process", "restriction_log"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["restriction_workflow"]},
+      "severity": "MEDIUM",
+      "article_reference": "Art. 18"
+    },
+    {
+      "id": "GDPR.Art20",
+      "name": "Right to Data Portability",
+      "description": "The data subject shall have the right to receive personal data in a structured, commonly used and machine-readable format.",
+      "category": "Article 20 - Data Subject Rights",
+      "evidence_types": ["portability_process", "export_format"],
+      "rule_type": "existence",
+      "rule_config": {"required_processes": ["portability_workflow"]},
+      "severity": "MEDIUM",
+      "article_reference": "Art. 20"
+    },
+    {
+      "id": "GDPR.Art25",
+      "name": "Data Protection by Design and by Default",
+      "description": "The controller shall implement appropriate technical and organisational measures for implementing data protection principles.",
+      "category": "Article 25 - Data Protection by Design",
+      "evidence_types": ["privacy_by_design_policy", "dpia_template"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["privacy_by_design_policy"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 25"
+    },
+    {
+      "id": "GDPR.Art30",
+      "name": "Records of Processing Activities",
+      "description": "Each controller and processor shall maintain a record of processing activities under its responsibility.",
+      "category": "Article 30 - Documentation",
+      "evidence_types": ["processing_register", "ropa_documentation"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["processing_register"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 30"
+    },
+    {
+      "id": "GDPR.Art32",
+      "name": "Security of Processing",
+      "description": "The controller and processor shall implement appropriate technical and organisational measures to ensure security.",
+      "category": "Article 32 - Security",
+      "evidence_types": ["security_policy", "encryption_config", "access_controls", "security_testing"],
+      "rule_type": "existence",
+      "rule_config": {"required_controls": ["encryption", "access_control", "security_testing"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 32"
+    },
+    {
+      "id": "GDPR.Art33",
+      "name": "Notification of Personal Data Breach",
+      "description": "In the case of a personal data breach, the controller shall notify the supervisory authority within 72 hours.",
+      "category": "Article 33 - Breach Notification",
+      "evidence_types": ["breach_response_plan", "breach_notification_log"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["breach_response_plan"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 33"
+    },
+    {
+      "id": "GDPR.Art35",
+      "name": "Data Protection Impact Assessment",
+      "description": "Where processing is likely to result in a high risk, the controller shall carry out an assessment.",
+      "category": "Article 35 - DPIA",
+      "evidence_types": ["dpia_template", "dpia_records"],
+      "rule_type": "existence",
+      "rule_config": {"required_documents": ["dpia_template", "dpia_process"]},
+      "severity": "HIGH",
+      "article_reference": "Art. 35"
+    },
+    {
+      "id": "GDPR.Art37",
+      "name": "Data Protection Officer",
+      "description": "The controller and processor shall designate a data protection officer in certain circumstances.",
+      "category": "Article 37 - DPO",
+      "evidence_types": ["dpo_designation", "dpo_contact_info"],
+      "rule_type": "conditional",
+      "rule_config": {"required_if": ["public_authority", "large_scale_monitoring"]},
+      "severity": "MEDIUM",
+      "article_reference": "Art. 37"
+    }
+  ]
+}
