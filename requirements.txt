@@ -42,6 +42,9 @@ httpx==0.25.2
 # Encryption
 cryptography==41.0.7
 
+# Storage (Minio - S3 compatible)
+minio==7.2.0
+
 # Reports
 reportlab==4.0.7
 openpyxl==3.1.2

@@ -37,7 +37,7 @@
 
 | ID | Requirement | Status | Implementation |
 |----|-------------|--------|----------------|
-| NFR-01 | Evidence encrypted at rest (AES-256) | ⚠️ In Progress | Schema ready (`encryption_key_id`), Minio integration pending |
+| NFR-01 | Evidence encrypted at rest (AES-256) | ✅ **COMPLETE** | `server/storage/minio_client.py`, `engine/evidence_store.py` |
 | NFR-02 | Audit log of every evidence collection event | ✅ Complete | `server/models/audit_log.py` |
 | NFR-03 | Self-hostable — no data leaves network | ✅ Complete | All services in `docker-compose.yml`, vLLM/Ollama for local LLM |
 | NFR-04 | Read-only IAM for evidence collection | ✅ Complete | Documented in README, connectors use read-only APIs |
@@ -203,7 +203,7 @@
 |----------|----------|----------|-------------|-------------|------------|
 | Hard Requirements | 3 | 3 | 0 | 0 | 100% |
 | Functional Requirements | 12 | 12 | 0 | 0 | 100% |
-| Non-Functional Requirements | 6 | 5 | 1 | 0 | 83% |
+| Non-Functional Requirements | 6 | 6 | 0 | 0 | 100% |
 | Connectors | 11 | 11 | 0 | 0 | 100% |
 | Engine | 9 | 9 | 0 | 0 | 100% |
 | Frameworks | 5 | 5 | 0 | 0 | 100% |
@@ -214,8 +214,9 @@
 | Task Scheduler | 9 | 9 | 0 | 0 | 100% |
 | Tests | 5 | 0 | 5 | 0 | 20% |
 | Infrastructure | 5 | 5 | 0 | 0 | 100% |
+| **Storage (Minio)** | **8** | **6** | **0** | **2** | **75%** |
 
-**Overall Project Completion: ~85%**
+**Overall Project Completion: ~88%** (was 85%)
 
 ---
 
